@@ -31,22 +31,45 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="reportType">Loại Báo Cáo</label>
-                                <select id="reportType">
-                                    <option value="balance">Bảng Cân Đối Kế Toán</option>
-                                    <option value="income">Kết Quả Kinh Doanh</option>
-                                    <option value="cashflow">Lưu Chuyển Tiền Tệ</option>
-                                </select>
+                                <div class="custom-dropdown" id="reportTypeSelector">
+                                    <div class="dropdown-trigger" id="reportTypeTrigger">
+                                        <span id="reportTypeDisplay">Bảng Cân Đối Kế Toán</span>
+                                        <svg width="20" height="20" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="dropdown-list" id="reportTypeList">
+                                        <div class="dropdown-item selected" data-value="balance">Bảng Cân Đối Kế Toán
+                                        </div>
+                                        <div class="dropdown-item" data-value="income">Kết Quả Kinh Doanh</div>
+                                        <div class="dropdown-item" data-value="cashflow">Lưu Chuyển Tiền Tệ</div>
+                                    </div>
+                                    <input type="hidden" id="reportType" value="balance">
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="period">Kỳ Báo Cáo</label>
-                                <select id="period">
-                                    <option value="year">Cả Năm</option>
-                                    <option value="Q1">Quý I</option>
-                                    <option value="Q2">Quý II</option>
-                                    <option value="Q3">Quý III</option>
-                                    <option value="Q4">Quý IV</option>
-                                </select>
+                                <div class="custom-dropdown" id="periodSelector">
+                                    <div class="dropdown-trigger" id="periodTrigger">
+                                        <span id="periodDisplay">Cả Năm</span>
+                                        <svg width="20" height="20" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="dropdown-list" id="periodList">
+                                        <div class="dropdown-item selected" data-value="year">Cả Năm</div>
+                                        <div class="dropdown-item" data-value="Q1">Quý I</div>
+                                        <div class="dropdown-item" data-value="Q2">Quý II</div>
+                                        <div class="dropdown-item" data-value="Q3">Quý III</div>
+                                        <div class="dropdown-item" data-value="Q4">Quý IV</div>
+                                    </div>
+                                    <input type="hidden" id="period" value="year">
+                                </div>
                             </div>
 
                             <div class="form-group">
