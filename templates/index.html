@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biểu Đồ Sankey - Báo Cáo Tài Chính</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">📊 Sankey Tài Chính</h1>
+            <p class="subtitle">Trực quan hóa báo cáo tài chính Việt Nam</p>
+        </header>
+
+        <div class="app-layout">
+            <!-- Sidebar: Controls & Settings -->
+            <aside class="sidebar">
+                <div class="form-container">
+                    <form id="sankeyForm" class="sankey-form">
+                        <div class="form-group">
+                            <label for="symbol">Mã Cổ Phiếu</label>
+                            <input type="text" id="symbol" placeholder="VNM, VCB, HPG..." required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="reportType">Loại Báo Cáo</label>
+                                <select id="reportType">
+                                    <option value="balance">Bảng Cân Đối Kế Toán</option>
+                                    <option value="income">Kết Quả Kinh Doanh</option>
+                                    <option value="cashflow">Lưu Chuyển Tiền Tệ</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="period">Kỳ Báo Cáo</label>
+                                <select id="period">
+                                    <option value="year">Cả Năm</option>
+                                    <option value="Q1">Quý I</option>
+                                    <option value="Q2">Quý II</option>
+                                    <option value="Q3">Quý III</option>
+                                    <option value="Q4">Quý IV</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="year">Năm</label>
+                                <input type="number" id="year" value="2024" min="2000" max="2030">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="submitBtn" class="btn-submit">Tạo Biểu Đồ</button>
+                            <button type="button" id="submitAllBtn" class="btn-submit btn-secondary">Tạo 3 Báo
+                                Cáo</button>
+                        </div>
+                    </form>
+
+                    <!-- Sankey Settings Panel -->
+                    <div id="settingsPanel" class="settings-panel">
+                        <h3 class="settings-title">Cấu hình</h3>
+
+                        <div class="settings-section">
+                            <div class="settings-grid">
+                                <div class="setting-item">
+                                    <label>Rộng (px)</label>
+                                    <input type="range" id="diagramWidth" min="600" max="2400" value="1000">
+                                    <span id="diagramWidthVal" class="setting-val">1000px</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label>Cao (px)</label>
+                                    <input type="range" id="diagramHeight" min="400" max="2400" value="600">
+                                    <span id="diagramHeightVal" class="setting-val">600px</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label>Độ cao Node (%)</label>
+                                    <input type="range" id="nodeHeightFactor" min="10" max="250" value="100">
+                                    <span id="nodeHeightFactorVal" class="setting-val">100%</span>
+                                </div>
+                                <div class="setting-item">
+                                    <label>Khoảng cách Node</label>
+                                    <input type="range" id="nodeSpacing" min="10" max="150" value="40">
+                                    <span id="nodeSpacingVal" class="setting-val">40</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section"
+                            style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                            <h4 class="section-subtitle">Tùy chọn Layout</h4>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="leftJustifyOrigins"> Căn lề trái các điểm bắt đầu
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" id="rightJustifyEndpoints" checked> Căn lề phải các điểm kết
+                                    thúc
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section"
+                            style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                            <h4 class="section-subtitle">Màu sắc</h4>
+                            <div class="color-grid">
+                                <div class="color-item"><input type="color" id="paletteColor1" value="#3b82f6"></div>
+                                <div class="color-item"><input type="color" id="paletteColor2" value="#10b981"></div>
+                                <div class="color-item"><input type="color" id="paletteColor3" value="#f59e0b"></div>
+                                <div class="color-item"><input type="color" id="paletteColor4" value="#8b5cf6"></div>
+                                <div class="color-item"><input type="color" id="paletteColor5" value="#ef4444"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content: Diagram & Results -->
+            <main class="main-content">
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <div id="resultContainer" class="result-container" style="display: none;">
+                    <div class="result-header">
+                        <h2 id="resultTitle">Kết Quả</h2>
+                        <div class="button-group">
+                            <button id="downloadPngBtn" class="btn-download">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                Lưu PNG
+                            </button>
+                            <button id="downloadBtn" class="btn-download btn-secondary">Raw Data</button>
+                        </div>
+                    </div>
+
+                    <div id="sankeyDiagram" class="sankey-diagram"></div>
+
+                    <div id="sankeyRawTextContainer" class="sankey-text-container" style="display: none;">
+                        <h3>Dữ liệu Raw</h3>
+                        <pre id="sankeyRawText" class="sankey-raw-text"></pre>
+                    </div>
+                </div>
+
+                <div id="initialState" class="initial-state">
+                    <p>Nhập mã cổ phiếu ở bên trái để bắt đầu trực quan hóa dữ liệu.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="{{ url_for('static', filename='js/sankey_lib/sankey.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+.flaskenv
+.vscode/
+.idea/
+*.log
+.DS_Store
+static/js/sankey_lib/
+node_modules/
+dist/
+build/
