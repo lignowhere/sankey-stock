@@ -847,21 +847,22 @@ body {
 
     /* Sankey diagram mobile optimization - vertical orientation */
     .sankey-diagram {
-        min-height: 400px;
-        padding: 0.25rem;
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
+        min-height: 100vh;
+        height: auto;
+        padding: 1rem 0.25rem;
+        overflow: visible;
         margin: 0;
         width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+        display: block;
+        position: relative;
     }
 
     .sankey-diagram svg {
         transform: rotate(90deg);
-        transform-origin: center center;
+        transform-origin: top left;
         display: block;
+        position: relative;
+        left: 100%;
     }
 
     /* Initial state message */
