@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (yearSelect) {
         const currentYear = new Date().getFullYear();
         const startYear = 2010;
-        const endYear = currentYear + 1; // Include next year for forward compatibility
+        const endYear = currentYear; // Only up to current year as requested
 
         for (let y = endYear; y >= startYear; y--) {
             const option = document.createElement('option');
