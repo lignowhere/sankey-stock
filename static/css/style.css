@@ -731,135 +731,167 @@ body {
 
 @media (max-width: 768px) {
     body {
-        padding: 1rem 0.5rem;
+        padding: 0.75rem 0.5rem;
     }
 
     .container {
         width: 100%;
         padding: 0;
+        overflow-x: hidden;
+    }
+
+    .app-layout {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .sidebar {
+        flex: none;
+        width: 100%;
+        position: static;
+        max-height: none;
+        padding-right: 0;
+    }
+
+    .main-content {
+        width: 100%;
+        padding: 0;
+        overflow-x: hidden;
     }
 
     .header {
-        margin-bottom: 1rem;
+        margin-bottom: 0.75rem;
         padding: 0 0.5rem;
     }
 
     .title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
 
     .subtitle {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 
     .form-container {
-        padding: 1.25rem;
-        border-radius: 16px;
+        padding: 1rem;
+        border-radius: 12px;
+        margin: 0 0.25rem 0.75rem;
     }
 
     .form-row {
         grid-template-columns: 1fr;
-        gap: 1rem;
+        gap: 0.75rem;
+    }
+
+    .form-group {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group label {
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
     }
 
     .dropdown-trigger {
-        padding: 0.85rem 1rem;
-        /* Larger tap target */
+        padding: 0.75rem 0.875rem;
+        font-size: 0.875rem;
+    }
+
+    .form-actions {
+        gap: 0.5rem;
     }
 
     .btn-submit {
-        padding: 1.1rem;
-        /* Larger tap target */
+        padding: 0.875rem;
+        font-size: 0.9rem;
     }
 
+    /* Hide settings panel on mobile */
+    .settings-panel {
+        display: none;
+    }
+
+    /* Result container mobile optimization */
     .result-container {
-        padding: 1rem;
-        border-radius: 16px;
+        padding: 0.75rem;
+        border-radius: 12px;
+        margin: 0 0.25rem;
     }
 
     .result-header {
         flex-direction: column;
-        gap: 1.25rem;
-        align-items: flex-start;
+        gap: 0.75rem;
+        align-items: stretch;
     }
 
     .result-title-main {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .result-title-sub {
+        font-size: 0.75rem;
     }
 
     .button-group {
         width: 100%;
+        display: flex;
+        gap: 0.5rem;
     }
 
     .btn-download {
         flex: 1;
         justify-content: center;
-        padding: 0.8rem;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.8rem;
     }
 
+    /* Sankey diagram mobile optimization - vertical orientation */
     .sankey-diagram {
         min-height: 400px;
+        padding: 0.25rem;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .sankey-diagram svg {
+        transform: rotate(90deg);
+        transform-origin: center center;
+        display: block;
+    }
+
+    /* Initial state message */
+    .initial-state {
+        padding: 2rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Error message */
+    .error-message {
+        margin: 0.5rem 0.25rem;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    /* Multi-chart container for batch reports */
+    .multi-charts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .chart-wrapper {
         padding: 0.5rem;
     }
 
-    .setting-item label {
-        font-size: 0.7rem;
+    .chart-type-tag {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
     }
-}
-
-@media (max-width: 768px) {
-    .sankey-diagram.rotated {
-        transform: rotate(90deg);
-        transform-origin: center center;
-        width: 90vh !important;
-        height: 90vw !important;
-        margin-top: calc((100vw - 90vh) / 2);
-        margin-bottom: calc((100vw - 90vh) / 2);
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        overflow: auto;
-    }
-
-    .sankey-diagram.rotated svg {
-        max-width: 100%;
-        height: auto;
-    }
-
-    /* Make non-rotated diagram scrollable horizontally */
-    .sankey-diagram:not(.rotated) {
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-}
-
-.btn-rotate {
-    display: none;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: 10px;
-    color: var(--primary);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .btn-rotate {
-        display: flex;
-    }
-}
-
-.btn-rotate:hover {
-    background: var(--primary);
-    color: white;
-}
-
-.btn-rotate.active {
-    background: var(--primary);
-    color: white;
 }
 
 /* Extra small devices */
@@ -870,5 +902,9 @@ body {
 
     .form-container {
         padding: 1rem;
+    }
+
+    .sankey-diagram {
+        min-height: 250px;
     }
 }

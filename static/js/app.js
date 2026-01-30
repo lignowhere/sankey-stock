@@ -24,34 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return p;
     };
 
-    const addRotateButton = () => {
-        if (window.innerWidth < 768) {
-            const buttonGroup = resultContainer.querySelector('.button-group');
-            if (buttonGroup && !buttonGroup.querySelector('.btn-rotate')) {
-                const rotateBtn = document.createElement('button');
-                rotateBtn.className = 'btn-rotate active';
-                rotateBtn.innerHTML = `
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Xoay Biểu Đồ
-                `;
-                rotateBtn.addEventListener('click', () => {
-                    sankeyDiagram.classList.toggle('rotated');
-                    rotateBtn.classList.toggle('active');
-                });
-                buttonGroup.insertBefore(rotateBtn, buttonGroup.firstChild);
-
-                // Auto-rotate by default for mobile
-                sankeyDiagram.classList.add('rotated');
-            }
-        }
-    };
-
     // --- Sankey Settings State ---
+    // On mobile: SVG is rotated 90° via CSS, so we render wide/short and it displays as tall/narrow
+    // On PC: horizontal diagram (wide width, shorter height)
+    const isMobile = window.innerWidth < 768;
     const sankeySettings = {
-        diagramWidth: window.innerWidth < 768 ? Math.max(800, window.innerWidth - 40) : 1100,
-        diagramHeight: window.innerWidth < 768 ? 500 : 600,
+        // On mobile: width becomes visual height after rotation, height becomes visual width
+        diagramWidth: isMobile ? Math.max(window.innerHeight * 1.4, 1000) : 1100,
+        diagramHeight: isMobile ? Math.min(window.innerWidth - 40, 350) : 600,
         // Match SankeyMATIC-style semantics:
         // - nodeHeightFactor: 0..1 (SankeyMATIC default = 0.5)
         // - nodeSpacing: 0..100 meaning "spacing factor %" (SankeyMATIC default = 85)
@@ -319,8 +299,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="result-title-main">${reportNames[formData.report_type]}</div>
                 <div class="result-title-sub">${formData.symbol} | ${displayPeriod} | Đơn vị: Tỷ VNĐ</div>
             `;
-
-            addRotateButton();
 
             lastSankeyText = data.data;
             // Update formData with actual period for SVG title
