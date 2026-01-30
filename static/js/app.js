@@ -33,61 +33,95 @@ document.addEventListener('DOMContentLoaded', function () {
         palette: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#84cc16", "#f43f5e", "#94a3b8"]
     };
 
-    // --- Dynamic Year Population & Custom Dropdown ---
-    const yearSelector = document.getElementById('yearSelector');
-    const yearTrigger = document.getElementById('yearTrigger');
-    const yearList = document.getElementById('yearList');
-    const yearDisplay = document.getElementById('yearDisplay');
-    const yearInput = document.getElementById('year');
+    // --- Custom Dropdown Manager ---
+    function initCustomDropdown(selectorId, triggerId, listId, displayId, inputId, onSelect = null) {
+        const selector = document.getElementById(selectorId);
+        const trigger = document.getElementById(triggerId);
+        const list = document.getElementById(listId);
+        const display = document.getElementById(displayId);
+        const input = document.getElementById(inputId);
 
-    if (yearSelector && yearList) {
-        const currentYear = new Date().getFullYear();
-        const startYear = 2010;
-        const endYear = currentYear;
-
-        // Populate List
-        for (let y = endYear; y >= startYear; y--) {
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
-            if (y === currentYear) item.classList.add('selected');
-            item.textContent = y;
-            item.dataset.value = y;
-
-            item.addEventListener('click', () => {
-                // Update Value
-                yearInput.value = y;
-                yearDisplay.textContent = y;
-
-                // Update UI state
-                yearList.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
-                item.classList.add('selected');
-
-                // Close list
-                yearSelector.classList.remove('active');
-
-                // Trigger re-render if needed
-                if (lastSankeyText) renderSankeyDiagram(lastSankeyText, lastFormData);
-            });
-
-            yearList.appendChild(item);
-        }
+        if (!selector || !list || !trigger) return;
 
         // Toggle visibility
-        yearTrigger.addEventListener('click', (e) => {
+        trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            yearSelector.classList.toggle('active');
+            // Close all other open dropdowns first
+            document.querySelectorAll('.custom-dropdown').forEach(d => {
+                if (d !== selector) d.classList.remove('active');
+            });
+            selector.classList.toggle('active');
+        });
+
+        // Toggle logic for items already in HTML
+        const items = list.querySelectorAll('.dropdown-item');
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const val = item.dataset.value;
+                input.value = val;
+                display.textContent = item.textContent;
+
+                list.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+
+                selector.classList.remove('active');
+                if (onSelect) onSelect(val);
+                if (lastSankeyText) renderSankeyDiagram(lastSankeyText, lastFormData);
+            });
         });
 
         // Close on click outside
         document.addEventListener('click', (e) => {
-            if (!yearSelector.contains(e.target)) {
-                yearSelector.classList.remove('active');
+            if (!selector.contains(e.target)) {
+                selector.classList.remove('active');
             }
         });
 
-        // Initial values
-        yearInput.value = currentYear;
-        yearDisplay.textContent = currentYear;
+        return {
+            addItem: (text, value, isSelected = false) => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                if (isSelected) {
+                    item.classList.add('selected');
+                    input.value = value;
+                    display.textContent = text;
+                }
+                item.textContent = text;
+                item.dataset.value = value;
+
+                item.addEventListener('click', () => {
+                    input.value = value;
+                    display.textContent = text;
+                    list.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                    item.classList.add('selected');
+                    selector.classList.remove('active');
+                    if (onSelect) onSelect(value);
+                    if (lastSankeyText) renderSankeyDiagram(lastSankeyText, lastFormData);
+                });
+
+                list.appendChild(item);
+            },
+            clearItems: () => {
+                list.innerHTML = '';
+            }
+        };
+    }
+
+    // Initialize Report Type and Period
+    initCustomDropdown('reportTypeSelector', 'reportTypeTrigger', 'reportTypeList', 'reportTypeDisplay', 'reportType');
+    initCustomDropdown('periodSelector', 'periodTrigger', 'periodList', 'periodDisplay', 'period');
+
+    // Initialize Year Dropdown with dynamic population
+    const yearDropdown = initCustomDropdown('yearSelector', 'yearTrigger', 'yearList', 'yearDisplay', 'year');
+    if (yearDropdown) {
+        const currentYear = new Date().getFullYear();
+        const startYear = 2010;
+        const endYear = currentYear;
+
+        yearDropdown.clearItems();
+        for (let y = endYear; y >= startYear; y--) {
+            yearDropdown.addItem(y.toString(), y.toString(), y === currentYear);
+        }
     }
 
     let lastSankeyText = null;
