@@ -811,21 +811,23 @@ body {
     .sankey-diagram.rotated {
         transform: rotate(90deg);
         transform-origin: center center;
-        width: 85vh !important;
-        /* Becomes visual height */
-        height: 100vw !important;
-        /* Becomes visual width */
-        margin-top: 15vh;
-        margin-bottom: 15vh;
+        width: 90vh !important;
+        height: 90vw !important;
+        margin-top: calc((100vw - 90vh) / 2);
+        margin-bottom: calc((100vw - 90vh) / 2);
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        overflow: auto;
     }
 
     .sankey-diagram.rotated svg {
         max-width: 100%;
-        max-height: 100%;
+        height: auto;
+    }
+
+    /* Make non-rotated diagram scrollable horizontally */
+    .sankey-diagram:not(.rotated) {
+        overflow-x: auto;
+        overflow-y: hidden;
     }
 }
 
