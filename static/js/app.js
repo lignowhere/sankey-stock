@@ -338,10 +338,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(data.error || 'Có lỗi xảy ra khi tạo báo cáo');
             }
 
+            // Batch Year Mismatch Warning
+            const mismatched = [];
+            if (data.actual_periods) {
+                for (const [key, ap] of Object.entries(data.actual_periods)) {
+                    if (ap && !ap.includes(formData.year.toString())) {
+                        mismatched.push(ap);
+                    }
+                }
+            }
+
+            if (mismatched.length > 0) {
+                const uniqueActuals = [...new Set(mismatched)].join(', ');
+                errorMessage.innerHTML = `⚠️ Lưu ý: Không tìm thấy đầy đủ dữ liệu ${formData.year}. Đang hiển thị dữ liệu mới nhất: <strong>${uniqueActuals}</strong>.`;
+                errorMessage.style.background = 'rgba(245, 158, 11, 0.1)';
+                errorMessage.style.borderColor = '#f59e0b';
+                errorMessage.style.color = '#fde68a';
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+                errorMessage.style.background = '';
+                errorMessage.style.borderColor = '';
+                errorMessage.style.color = '';
+            }
+
             // Prepare UI for multiple charts
+            const periodNames = { 'Q1': 'Quý I', 'Q2': 'Quý II', 'Q3': 'Quý III', 'Q4': 'Quý IV', 'year': 'Cả Năm' };
             resultTitle.innerHTML = `
                 <div class="result-title-main">Báo Cáo Tài Chính Tổng Hợp</div>
-                <div class="result-title-sub">${formData.symbol} | ${data.period} ${formData.year}</div>
+                <div class="result-title-sub">${formData.symbol} | ${periodNames[formData.period]} ${formData.year} | Đơn vị: Tỷ VNĐ</div>
             `;
 
             sankeyDiagram.innerHTML = '<div class="multi-charts-container"></div>';
@@ -360,16 +385,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     wrapper.className = 'chart-wrapper';
                     wrapper.id = `chart-${type}`;
 
+                    const actualP = data.actual_periods?.[type] || '';
+                    const isMismatch = actualP && !actualP.includes(formData.year.toString());
+
                     const titleDiv = document.createElement('div');
                     titleDiv.className = 'chart-title-container';
                     titleDiv.style.display = 'flex';
                     titleDiv.style.justifyContent = 'space-between';
                     titleDiv.style.alignItems = 'center';
 
+                    const tagWrapper = document.createElement('div');
+                    tagWrapper.style.display = 'flex';
+                    tagWrapper.style.alignItems = 'center';
+                    tagWrapper.style.gap = '8px';
+
                     const tag = document.createElement('span');
                     tag.className = 'chart-type-tag';
                     tag.textContent = reportNames[type];
-                    titleDiv.appendChild(tag);
+                    tagWrapper.appendChild(tag);
+
+                    if (isMismatch) {
+                        const warnTag = document.createElement('span');
+                        warnTag.style.fontSize = '0.75rem';
+                        warnTag.style.color = '#f59e0b';
+                        warnTag.style.fontWeight = '600';
+                        warnTag.textContent = `(Dữ liệu: ${actualP})`;
+                        tagWrapper.appendChild(warnTag);
+                    }
+                    titleDiv.appendChild(tagWrapper);
 
                     const dlBtn = document.createElement('button');
                     dlBtn.className = 'btn-download';
@@ -389,6 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const chartDiv = document.createElement('div');
                     chartDiv.className = 'sankey-item-diagram';
+                    chartDiv.style.overflowX = 'auto'; // Support scroll for horizontal ratio
                     wrapper.appendChild(chartDiv);
 
                     multiContainer.appendChild(wrapper);
