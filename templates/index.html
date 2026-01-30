@@ -51,9 +51,20 @@
 
                             <div class="form-group">
                                 <label for="year">Năm</label>
-                                <select id="year">
-                                    <!-- Populated dynamically by app.js -->
-                                </select>
+                                <div class="custom-dropdown" id="yearSelector">
+                                    <div class="dropdown-trigger" id="yearTrigger">
+                                        <span id="yearDisplay">2026</span>
+                                        <svg width="20" height="20" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="dropdown-list" id="yearList">
+                                        <!-- Populated dynamically by app.js -->
+                                    </div>
+                                    <input type="hidden" id="year" value="2026">
+                                </div>
                             </div>
                         </div>
 

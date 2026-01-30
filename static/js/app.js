@@ -33,20 +33,61 @@ document.addEventListener('DOMContentLoaded', function () {
         palette: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#84cc16", "#f43f5e", "#94a3b8"]
     };
 
-    // --- Dynamic Year Population ---
-    const yearSelect = document.getElementById('year');
-    if (yearSelect) {
+    // --- Dynamic Year Population & Custom Dropdown ---
+    const yearSelector = document.getElementById('yearSelector');
+    const yearTrigger = document.getElementById('yearTrigger');
+    const yearList = document.getElementById('yearList');
+    const yearDisplay = document.getElementById('yearDisplay');
+    const yearInput = document.getElementById('year');
+
+    if (yearSelector && yearList) {
         const currentYear = new Date().getFullYear();
         const startYear = 2010;
-        const endYear = currentYear; // Only up to current year as requested
+        const endYear = currentYear;
 
+        // Populate List
         for (let y = endYear; y >= startYear; y--) {
-            const option = document.createElement('option');
-            option.value = y;
-            option.textContent = y;
-            if (y === currentYear) option.selected = true;
-            yearSelect.appendChild(option);
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            if (y === currentYear) item.classList.add('selected');
+            item.textContent = y;
+            item.dataset.value = y;
+
+            item.addEventListener('click', () => {
+                // Update Value
+                yearInput.value = y;
+                yearDisplay.textContent = y;
+
+                // Update UI state
+                yearList.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+
+                // Close list
+                yearSelector.classList.remove('active');
+
+                // Trigger re-render if needed
+                if (lastSankeyText) renderSankeyDiagram(lastSankeyText, lastFormData);
+            });
+
+            yearList.appendChild(item);
         }
+
+        // Toggle visibility
+        yearTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            yearSelector.classList.toggle('active');
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+            if (!yearSelector.contains(e.target)) {
+                yearSelector.classList.remove('active');
+            }
+        });
+
+        // Initial values
+        yearInput.value = currentYear;
+        yearDisplay.textContent = currentYear;
     }
 
     let lastSankeyText = null;

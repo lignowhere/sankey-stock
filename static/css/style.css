@@ -123,8 +123,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
     padding: 0.75rem 1rem;
     background: var(--bg-input);
     border: 2px solid transparent;
@@ -134,26 +133,105 @@ body {
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
 }
 
-.form-group select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cbd5e1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1.25rem;
-    padding-right: 2.5rem;
-    cursor: pointer;
-}
-
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
     outline: none;
     border-color: var(--primary);
     background: #1e293b;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
     transform: translateY(-1px);
+}
+
+/* Custom Dropdown Styling */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-trigger {
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-trigger:hover {
+    background: var(--border);
+}
+
+.custom-dropdown.active .dropdown-trigger {
+    border-color: var(--primary);
+    background: #1e293b;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.dropdown-trigger svg {
+    transition: transform 0.3s ease;
+    color: var(--text-secondary);
+}
+
+.custom-dropdown.active .dropdown-trigger svg {
+    transform: rotate(180deg);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.custom-dropdown.active .dropdown-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
+.dropdown-item.selected {
+    background: var(--primary);
+    color: white;
+}
+
+/* Scrollbar for Dropdown List */
+.dropdown-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
 }
 
 .form-group input::placeholder {
