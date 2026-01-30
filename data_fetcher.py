@@ -85,7 +85,7 @@ def fetch_financial_data(symbol, report_type, period, year):
         transposed['VALUE'] = transposed['VALUE'] * 1000
         
         print(f"✅ Successfully fetched and transformed KBS data for {symbol} ({target_col})")
-        return transposed
+        return transposed, target_col
                 
     except Exception as e:
         print(f"❌ Failed to fetch data for {symbol}: {str(e)}")

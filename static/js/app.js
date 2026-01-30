@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Sankey Settings State ---
     const sankeySettings = {
-        diagramWidth: window.innerWidth < 768 ? window.innerWidth - 40 : 1100,
+        diagramWidth: window.innerWidth < 768 ? Math.max(800, window.innerWidth - 40) : 1100,
         diagramHeight: window.innerWidth < 768 ? 500 : 600,
         // Match SankeyMATIC-style semantics:
         // - nodeHeightFactor: 0..1 (SankeyMATIC default = 0.5)
@@ -258,6 +258,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 throw new Error(data.error || 'Có lỗi xảy ra khi tạo biểu đồ');
             }
 
+            // Year Mismatch Warning
+            if (data.actual_period && !data.actual_period.includes(formData.year.toString())) {
+                errorMessage.innerHTML = `⚠️ Lưu ý: Không tìm thấy dữ liệu cho năm ${formData.year}. Hệ thống đang hiển thị dữ liệu mới nhất có sẵn: <strong>${data.actual_period}</strong>.`;
+                errorMessage.style.background = 'rgba(245, 158, 11, 0.1)';
+                errorMessage.style.borderColor = '#f59e0b';
+                errorMessage.style.color = '#fde68a';
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+                // Reset styles if it was a warning before
+                errorMessage.style.background = '';
+                errorMessage.style.borderColor = '';
+                errorMessage.style.color = '';
+            }
+
             const reportNames = { 'balance': 'Bảng Cân Đối Kế Toán', 'income': 'Báo Cáo Kết Quả Kinh Doanh', 'cashflow': 'Báo Cáo Lưu Chuyển Tiền Tệ' };
             const periodNames = { 'Q1': 'Quý I', 'Q2': 'Quý II', 'Q3': 'Quý III', 'Q4': 'Quý IV', 'year': 'Cả Năm' };
 
@@ -281,6 +296,9 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error:', error);
             errorMessage.textContent = error.message;
+            errorMessage.style.background = 'rgba(239, 68, 68, 0.1)';
+            errorMessage.style.borderColor = 'var(--error)';
+            errorMessage.style.color = '#fca5a5';
             errorMessage.style.display = 'block';
         } finally {
             submitBtn.disabled = false;

@@ -92,13 +92,13 @@ def generate_sankey():
         
         # Fetch data from vnstock
         if report_type == 'balance':
-            df = fetch_balance_sheet(symbol, period, year)
+            df, actual_period = fetch_balance_sheet(symbol, period, year)
             sankey_data = balance.extract_flows_from_dataframe(df)
         elif report_type == 'income':
-            df = fetch_income_statement(symbol, period, year)
+            df, actual_period = fetch_income_statement(symbol, period, year)
             sankey_data = income.extract_flows_from_dataframe(df)
         elif report_type == 'cashflow':
-            df = fetch_cash_flow(symbol, period, year)
+            df, actual_period = fetch_cash_flow(symbol, period, year)
             sankey_data = cashflow.extract_flows_from_dataframe(df)
         else:
             return jsonify({
@@ -120,7 +120,8 @@ def generate_sankey():
             'symbol': symbol,
             'report_type': report_type,
             'period': period,
-            'year': year
+            'year': year,
+            'actual_period': actual_period
         })
         
     except Exception as e:
@@ -153,24 +154,29 @@ def generate_all_reports():
 
         results = {}
         
+        actual_periods = {}
+        
         # 1. Balance Sheet
         try:
-            df_balance = fetch_balance_sheet(symbol, period, year)
+            df_balance, ap_balance = fetch_balance_sheet(symbol, period, year)
             results['balance'] = balance.extract_flows_from_dataframe(df_balance)
+            actual_periods['balance'] = ap_balance
         except Exception as e:
             results['balance'] = f"// Error: {str(e)}"
 
         # 2. Income Statement
         try:
-            df_income = fetch_income_statement(symbol, period, year)
+            df_income, ap_income = fetch_income_statement(symbol, period, year)
             results['income'] = income.extract_flows_from_dataframe(df_income)
+            actual_periods['income'] = ap_income
         except Exception as e:
             results['income'] = f"// Error: {str(e)}"
 
         # 3. Cash Flow
         try:
-            df_cashflow = fetch_cash_flow(symbol, period, year)
+            df_cashflow, ap_cashflow = fetch_cash_flow(symbol, period, year)
             results['cashflow'] = cashflow.extract_flows_from_dataframe(df_cashflow)
+            actual_periods['cashflow'] = ap_cashflow
         except Exception as e:
             results['cashflow'] = f"// Error: {str(e)}"
             
@@ -179,7 +185,8 @@ def generate_all_reports():
             'data': results,
             'symbol': symbol,
             'period': period,
-            'year': year
+            'year': year,
+            'actual_periods': actual_periods
         })
         
     except Exception as e:
