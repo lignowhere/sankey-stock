@@ -730,26 +730,90 @@ body {
 }
 
 @media (max-width: 768px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+
     .container {
         width: 100%;
-        padding: 0 1rem;
+        padding: 0;
+    }
+
+    .header {
+        margin-bottom: 1rem;
+        padding: 0 0.5rem;
     }
 
     .title {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+    }
+
+    .subtitle {
+        font-size: 0.8rem;
     }
 
     .form-container {
-        padding: 1.5rem;
+        padding: 1.25rem;
+        border-radius: 16px;
     }
 
     .form-row {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .dropdown-trigger {
+        padding: 0.85rem 1rem;
+        /* Larger tap target */
+    }
+
+    .btn-submit {
+        padding: 1.1rem;
+        /* Larger tap target */
+    }
+
+    .result-container {
+        padding: 1rem;
+        border-radius: 16px;
     }
 
     .result-header {
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.25rem;
         align-items: flex-start;
+    }
+
+    .result-title-main {
+        font-size: 1.2rem;
+    }
+
+    .button-group {
+        width: 100%;
+    }
+
+    .btn-download {
+        flex: 1;
+        justify-content: center;
+        padding: 0.8rem;
+    }
+
+    .sankey-diagram {
+        min-height: 400px;
+        padding: 0.5rem;
+    }
+
+    .setting-item label {
+        font-size: 0.7rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .title {
+        font-size: 1.4rem;
+    }
+
+    .form-container {
+        padding: 1rem;
     }
 }
