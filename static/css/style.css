@@ -811,11 +811,21 @@ body {
     .sankey-diagram.rotated {
         transform: rotate(90deg);
         transform-origin: center center;
-        width: 100vh !important;
-        margin-left: calc(50% - 50vh);
-        margin-top: 250px;
-        margin-bottom: 250px;
+        width: 85vh !important;
+        /* Becomes visual height */
+        height: 100vw !important;
+        /* Becomes visual width */
+        margin-top: 15vh;
+        margin-bottom: 15vh;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sankey-diagram.rotated svg {
+        max-width: 100%;
+        max-height: 100%;
     }
 }
 
