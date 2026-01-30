@@ -10,7 +10,7 @@ ENV/
 .idea/
 *.log
 .DS_Store
-static/js/sankey_lib/
+# static/js/sankey_lib/ (removed to allow deployment)
 node_modules/
 dist/
 build/
