@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Sankey Settings State ---
     const sankeySettings = {
-        diagramWidth: 1100,
-        diagramHeight: 600,
+        diagramWidth: window.innerWidth < 768 ? window.innerWidth - 40 : 1100,
+        diagramHeight: window.innerWidth < 768 ? 500 : 600,
         // Match SankeyMATIC-style semantics:
         // - nodeHeightFactor: 0..1 (SankeyMATIC default = 0.5)
         // - nodeSpacing: 0..100 meaning "spacing factor %" (SankeyMATIC default = 85)
