@@ -11,6 +11,38 @@ document.addEventListener('DOMContentLoaded', function () {
     const downloadBtn = document.getElementById('downloadBtn');
     const submitAllBtn = document.getElementById('submitAllBtn');
 
+    // --- Helpers ---
+    const formatActualP = (p) => {
+        if (!p) return '';
+        if (p.includes('-Q')) {
+            const [y, q] = p.split('-Q');
+            return `Quý ${q} ${y}`;
+        }
+        if (/^\d{4}$/.test(p)) return `Cả Năm ${p}`;
+        return p;
+    };
+
+    const addRotateButton = () => {
+        if (window.innerWidth < 768) {
+            const buttonGroup = resultContainer.querySelector('.button-group');
+            if (buttonGroup && !buttonGroup.querySelector('.btn-rotate')) {
+                const rotateBtn = document.createElement('button');
+                rotateBtn.className = 'btn-rotate';
+                rotateBtn.innerHTML = `
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Xoay Biểu Đồ
+                `;
+                rotateBtn.addEventListener('click', () => {
+                    sankeyDiagram.classList.toggle('rotated');
+                    rotateBtn.classList.toggle('active');
+                });
+                buttonGroup.insertBefore(rotateBtn, buttonGroup.firstChild);
+            }
+        }
+    };
+
     // --- Sankey Settings State ---
     const sankeySettings = {
         diagramWidth: window.innerWidth < 768 ? Math.max(800, window.innerWidth - 40) : 1100,
@@ -276,13 +308,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const reportNames = { 'balance': 'Bảng Cân Đối Kế Toán', 'income': 'Báo Cáo Kết Quả Kinh Doanh', 'cashflow': 'Báo Cáo Lưu Chuyển Tiền Tệ' };
             const periodNames = { 'Q1': 'Quý I', 'Q2': 'Quý II', 'Q3': 'Quý III', 'Q4': 'Quý IV', 'year': 'Cả Năm' };
 
+            const displayPeriod = data.actual_period ? formatActualP(data.actual_period) : `${periodNames[formData.period]} ${formData.year}`;
+
             resultTitle.innerHTML = `
                 <div class="result-title-main">${reportNames[formData.report_type]}</div>
-                <div class="result-title-sub">${formData.symbol} | ${periodNames[formData.period]} ${formData.year} | Đơn vị: Tỷ VNĐ</div>
+                <div class="result-title-sub">${formData.symbol} | ${displayPeriod} | Đơn vị: Tỷ VNĐ</div>
             `;
 
+            addRotateButton();
+
             lastSankeyText = data.data;
-            lastFormData = formData;
+            // Update formData with actual period for SVG title
+            lastFormData = { ...formData, actual_period_text: displayPeriod };
             sankeyRawText.textContent = data.data;
             sankeyRawTextContainer.style.display = 'block';
             resultContainer.style.display = 'block';
@@ -364,10 +401,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Prepare UI for multiple charts
             const periodNames = { 'Q1': 'Quý I', 'Q2': 'Quý II', 'Q3': 'Quý III', 'Q4': 'Quý IV', 'year': 'Cả Năm' };
+
             resultTitle.innerHTML = `
                 <div class="result-title-main">Báo Cáo Tài Chính Tổng Hợp</div>
                 <div class="result-title-sub">${formData.symbol} | ${periodNames[formData.period]} ${formData.year} | Đơn vị: Tỷ VNĐ</div>
             `;
+
+            addRotateButton();
 
             sankeyDiagram.innerHTML = '<div class="multi-charts-container"></div>';
             const multiContainer = sankeyDiagram.querySelector('.multi-charts-container');
@@ -409,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         warnTag.style.fontSize = '0.75rem';
                         warnTag.style.color = '#f59e0b';
                         warnTag.style.fontWeight = '600';
-                        warnTag.textContent = `(Dữ liệu: ${actualP})`;
+                        warnTag.textContent = `(Dữ liệu: ${formatActualP(actualP)})`;
                         tagWrapper.appendChild(warnTag);
                     }
                     titleDiv.appendChild(tagWrapper);
@@ -438,7 +478,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     multiContainer.appendChild(wrapper);
 
                     // We need a specific formData for each render to get the title right in SVG
-                    const specificFormData = { ...formData, report_type: type };
+                    const specificFormData = {
+                        ...formData,
+                        report_type: type,
+                        actual_period_text: isMismatch ? formatActualP(actualP) : `${periodNames[formData.period]} ${formData.year}`
+                    };
                     renderSankeyDiagram(data.data[type], specificFormData, chartDiv);
 
                     // Add click listener for this specific download button
@@ -670,7 +714,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .attr("font-size", "14px")
             .attr("font-weight", "400")
             .attr("fill", "#64748b")
-            .text(`${formData.symbol} | ${periodNames[formData.period] || formData.period} ${formData.year} | Đơn vị: Tỷ VNĐ`);
+            .text(`${formData.symbol} | ${formData.actual_period_text || (periodNames[formData.period] || formData.period) + ' ' + formData.year} | Đơn vị: Tỷ VNĐ`);
 
         // Flow path generator (ported from SankeyMATIC):
         // - Uses filled parallelograms for near-horizontal flows (avoids artifacts)
