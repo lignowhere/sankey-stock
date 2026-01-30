@@ -33,6 +33,22 @@ document.addEventListener('DOMContentLoaded', function () {
         palette: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#84cc16", "#f43f5e", "#94a3b8"]
     };
 
+    // --- Dynamic Year Population ---
+    const yearSelect = document.getElementById('year');
+    if (yearSelect) {
+        const currentYear = new Date().getFullYear();
+        const startYear = 2010;
+        const endYear = currentYear + 1; // Include next year for forward compatibility
+
+        for (let y = endYear; y >= startYear; y--) {
+            const option = document.createElement('option');
+            option.value = y;
+            option.textContent = y;
+            if (y === currentYear) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+    }
+
     let lastSankeyText = null;
     let lastFormData = null;
 
